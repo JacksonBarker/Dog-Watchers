@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dog Watchers</title>
+    <style type="text/css">
+        body {
+            font-family: "Courier New", sans-serif;
+            text-align: center;
+        }
+
+        .button,
+        .watcher {
+            line-height: 1;
+            padding: 2rem;
+            margin: 2rem;
+            min-height: 1em;
+            min-width: 1em;
+        }
+
+        .button {
+            cursor: pointer;
+            user-select: none;
+            font-size: 4em;
+            display: flex;
+            justify-content: center;
+            border: medium solid;
+        }
+
+        .watcher {
+            min-width: 2em;
+            font-size: 4em;
+            display: flex;
+            justify-content: center;
+        }
+
+        .state {
+            font-size: 2em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="watcher">?</div>
+    <div class="p1 button">Person 1</div>
+    <div class="p2 button">Person 2</div>
+    <div class="p3 button">Person 3</div>
+    <div class="p4 button">Person 4</div>
+    <script>
+        var p1 = document.querySelector('.p1'),
+            p2 = document.querySelector('.p2'),
+            p3 = document.querySelector('.p3'),
+            p4 = document.querySelector('.p4'),
+            watcher = document.querySelector('.watcher'),
+            websocket = new WebSocket("ws://127.0.0.1:6789/");
+        p1.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'Person 1' }));
+        }
+        p2.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'Person 2' }));
+        }
+        p3.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'Person 3' }));
+        }
+        p4.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'Person 4' }));
+        }
+        websocket.onmessage = function (event) {
+            data = JSON.parse(event.data);
+            switch (data.type) {
+                case 'state':
+                    watcher.textContent = data.watcher;
+                    break;
+                default:
+                    console.error(
+                        "unsupported event", data);
+            }
+        };
+    </script>
+</body>
+
+</html>
